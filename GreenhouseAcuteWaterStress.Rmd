@@ -1,0 +1,464 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Here we analyzed the greenhouse acute water restriction
+
+Pacages and dependencies
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(ggpubr)
+#install.packages("emmeans")
+library(emmeans)
+#install.packages("multcomp")
+library(multcomp)
+#install.packages("lsmeans")
+library(lsmeans)
+library(lme4)
+```
+
+Palette
+```{r}
+fungi.colors <- c("#c6dbef","#9ecae1","#6baed6","#3182bd","#08519c",
+                           "#c7e9c0", "#a1d99b", "#74c476", "#41ab5d", "#238b45", "#005a32",
+                           "#fdd0a2", "#fdae6b", "#fd8d3c", "#f16913", "#d94801", "#8c2d04",
+                           "#dadaeb", "#bcbddc", "#9e9ac8", "#807dba", "#6a51a3", "#4a1486",
+                           "#fcbba1", "#fc9272", "#fb6a4a", "#ef3b2c", "#cb181d", "#99000d",
+                           "#d9d9d9", "#bdbdbd", "#969696", "#737373", "#525252", "#252525")
+                           
+cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+```
+
+Load dataset
+```{r}
+photosynq <- read.csv("/Users/lau/Desktop/AU_research/Old_Rotation/Jan2022/Greenhouse_experiment/greenhouse.exp4/greenhouseall.csv", na.strings = "NA")
+str(photosynq)
+```
+
+We eliminate NVP5 and days post drought 14
+```{r}
+photosynq_sub <- photosynq %>%
+  subset(!dayspostdrought %in% c(14)) %>%
+  subset(!Treatment %in% c("NVP5", "OEO-107", "OEO-112", "CCH_F36_A", "CCH_F36_B", "OEO-F5"))
+```
+
+Shoot dry biomass
+```{r}
+lm.shoot <- lmer(Shootbiomass~ Species + (1|Trial), data = photosynq_sub)
+#plot(lm.shoot)
+car::Anova(lm.shoot)
+anova(lm.shoot)
+summary(lm.shoot)
+lsmeans.shoot <- emmeans(lm.shoot, ~ Species, adjust = "tukey") # estimate lsmeans
+Results_lsmeeans <- cld(object = lsmeans.shoot,
+                        Letters = letters, reversed = TRUE, details = TRUE) # contrast with Tukey ajustment
+```
+Graph
+```{r}
+ShootBiomass <- photosynq_sub %>%
+  ggplot(aes(x = reorder(Species, -Shootbiomass), y = 1000*Shootbiomass)) +
+  stat_summary(fun.y=mean,geom="bar", width = 0.75, position = "dodge") +
+  #stat_compare_means(method = "anova", label = "p.signif") +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.5, position = "dodge") +
+  #geom_jitter(alpha = 0.05)+
+  #scale_x_discrete(labels = c("Control", "P. citrinum CCH_F37_B", "L. elongata NVP5", "L. elongata OEO-196",
+  #  "L. elongata OEO-198", "M. calciphila OEO-304", "M. alpina OEO-305")) +
+  ylab("Shoot biomass (mg)") +
+  xlab("") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 65, vjust = 1, hjust=1))
+```
+
+Root dry biomass
+```{r}
+lm.root <- lmer(Rootbiomass~ Species + (1|Trial), data = photosynq_sub)
+#plot(lm.root)
+car::Anova(lm.root)
+summary(lm.root)
+anova(lm.root)
+lsmeans.root <- emmeans(lm.root, ~ Species, adjust = "tukey") # estimate lsmeans
+Results_lsmeeans <- cld(object = lsmeans.root,
+                        Letters = letters, reversed = TRUE, details = TRUE) # contrast with Tukey ajustment
+```
+Graph
+```{r}
+photosynq_sub%>%
+  ggplot(aes(x = reorder(Species, -Rootbiomass), y = Rootbiomass)) +
+  #this is to take out the outlyers
+  geom_boxplot(outlier.colour = "white") +
+  scale_fill_manual(values=cbbPalette) +
+  stat_compare_means(method = "anova", label = "p.signif") +
+  ylab("Rootbiomass") +
+  xlab("") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust=1))
+```
+
+Phi2
+```{r}
+#remember to put the "dayspostdrought as factor to screen it for each
+lm.phi2 <- lm(Phi2~ Treatment*as.factor(dayspostdrought) + (1|Trial), data = photosynq_sub)
+#plot(lm.phi2)
+summary(lm.phi2)
+anova(lm.phi2)
+#this is the one we used #linear mixed effect model
+car::Anova(lm.phi2, test.statistic = "F")
+lsmeans.phi2 <- emmeans(lm.phi2, ~ Treatment|dayspostdrought, adjust = "tukey") # estimate lsmeans
+Results_lsmeeans <- cld(object = lsmeans.phi2,
+                        Letters = letters, reversed = TRUE, details = TRUE) # contrast with Tukey ajustment
+```
+Graph
+```{r}
+photosynq_sub %>%
+  #subset(Treatment %in% c("ND-F", "D-F", "OEO-196" ,"OEO-198", "OEO-304", "CCH_F37_B", "OEO-305")) %>%
+  subset(dayspostdrought %in% c(6:12)) %>%
+  ggplot(aes(x = Species, y = Phi2, fill = Species)) +
+  stat_summary(fun.y=mean,geom="bar", width = 0.75, position = "dodge") +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.5, position = "dodge") +
+  scale_fill_manual(values=fungi.colors) +
+  ylab("Phi2") +
+  xlab("") +
+  facet_wrap(~dayspostdrought)+
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+Rating
+```{r}
+lm.rating <- lmer(Rating~ Treatment*as.factor(dayspostdrought) + (1|Trial), data = photosynq_sub)
+#plot(lm.rating)
+#install.packages("lmerTest")
+anova(lm.rating)
+car::Anova(lm.rating, test.statistic = "F")
+anova(lm.rating)
+summary(lm.rating)
+lsmeans.rating <- emmeans(lm.rating, ~ Treatment|as.factor(dayspostdrought), adjust = "tukey") # estimate lsmeans
+Results_lsmeeansrating <- cld(object = lsmeans.rating,
+                              Letters = letters, reversed = TRUE, details = TRUE) # contrast with Tukey ajustment
+```
+Graph
+```{r}
+photosynq_sub %>%
+  #subset(Treatment %in% c("ND-F", "D-F", "OEO-196" ,"OEO-198", "OEO-304", "CCH_F37_B", "OEO-305")) %>%
+  subset(dayspostdrought %in% c(6:12)) %>%
+  ggplot(aes(x = Species, y = Rating, fill = Species)) +
+  stat_summary(fun.y=mean,geom="bar", width = 0.75, position = "dodge") +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.5, position = "dodge") +
+  scale_fill_manual(values=fungi.colors) +
+  ylab("Rating") +
+  xlab("") +
+  facet_wrap(~dayspostdrought)+
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
