@@ -3,7 +3,7 @@ title: "R Notebook"
 output: html_notebook
 ---
 
-Biomass assay of fungi P. citrinum CCH_F37_B for ambient and temperature feb.7.22
+Biomass assay of fungi P. citrinum CCH_F37_B for ambient and temperature 
 
 packages and dependencies 
 ```{r}
@@ -31,14 +31,13 @@ biomass_assay <- read.csv("/Users/lau/Desktop/AU_research/Old_Rotation/Jan2022/B
 ```
 
 
-First let's see do a linear model to see any significance
+First let's see do a linear model to see any significance btw growth and salt concentration
 ```{r}
 lm.biomass <- lm(Final_weight.flask~ Treatment, data = biomass_assay)
 #plot(lm)
 summary(lm.biomass)
 anova(lm.biomass)
 ```
-
 graph
 ```{r}
 ggplot(biomass_assay, aes(x = Label, y = Final_weight.flask, fill = Treatment)) +								
@@ -52,16 +51,5 @@ ggplot(biomass_assay, aes(x = Label, y = Final_weight.flask, fill = Treatment)) 
   coord_flip()								
 #facet_wrap(~Label, scales = "free")		
 ```
-
-
-
-
-
-
-
-
-
-
-
 
 
