@@ -1,6 +1,6 @@
 # Peanut fungal inoculation
 In this study, we screened fungi for salinity and high temperature with the objective of obtaining tolerant fungi. the fungi were P. citrinum, Mortierella calciphila, M. alpina, and Linnemannia elongata. these fungi were then inoculated into peanut seedlings and tested the response in the peanut plant under well-water conditions and drought (water restriction).
-# Temperature and salinity screening ([01_TemperatureandSaltExp.Rmd]https://github.com/lauraRodriiguez/PGPFpeanut/blob/main/01_TemperatureandSaltExp.Rmd)
+# Temperature and salinity screening ([01_TemperatureandSaltExp.Rmd](https://github.com/lauraRodriiguez/PGPFpeanut/blob/main/01_TemperatureandSaltExp.Rmd)
 Here is where we screened the fungal isolates to salinity and temperatures.
 # Biomass assay
 Some of the fungal cultures had a sporulated growth in the media plate, hence, we decided to do a biomass assay to ensure the growth in salinity and high temperature.
