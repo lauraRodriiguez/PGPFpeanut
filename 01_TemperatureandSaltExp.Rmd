@@ -1,0 +1,109 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Here will be working with salt and temperature experiment talk about this experiment
+
+Keep in mind that we are screening for NaCL (salt) and high temperature tolerance
+
+
+Packages and dependencies
+```{r}
+#install.packages("ggplot2")
+library(ggplot2)
+#install.packages("tidyverse")
+library(tidyverse)
+library(phyloseq)
+#install.packages("ggpubr")
+library(ggpubr)
+#install.packages("lsmeans")
+library(lsmeans)
+#install.packages("emmeans")
+library(emmeans)
+library(lme4)
+#install.packages("multcomp")
+library(multcomp)
+```
+
+Palettes
+```{r}
+cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+```
+
+Load dataset
+```{r}
+temperature_experiment <- read.csv("/Users/lau/Desktop/AU_research/Old_Rotation/August.2021/Salt_Experiment/temperature_Experiment/2022/2023/2023.03.24temperature_experiment31+23\ copy.csv", na.strings = "na")
+str(temperature_experiment)
+```
+
+First thing we are doing is visualizig all the screnned isolates that grew at least a bit in high NaCl and at the two different temepratures
+```{r}
+ggplot(na.omit(temperature_experiment), aes(x = Hours, y = MM, color = interaction(Conc, Temperature))) +
+  stat_summary(fun.y=mean,geom="line", width = 0.95) +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.70) +
+  ylab("Millimeters") +
+  xlab("")+
+  scale_color_manual(values=c(cbbPalette)) +
+  theme_classic() +
+ facet_wrap(~Isolate*Species, scales = "free")
+```
+
+Based on upper result we decided to work with isolates P. citrinum since it seems the high salt and high temperatures make the fungus grow better
+So, here we subset for P. citrinum and the Mortierellas and Linnemannia (becuse of known plant growth promotion)
+```{r}
+#Subset
+temperature_experiment_sub <- temperature_experiment %>%
+  subset(Isolate %in% c("CCH_F37_B", "OEO-196", "OEO-198", "OEO-304", "OEO-305"))
+
+q <- ggplot(na.omit(temperature_experiment_sub), aes(x = Hours, y = MM, color = interaction(Conc, Temperature))) +
+  stat_summary(fun.y=mean,geom="line", width = 0.95) +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.70) +
+  ylab("Millimeters") +
+  xlab("Time (hours)")+
+  scale_color_manual(values=c(cbbPalette)) +
+  theme_classic() +
+  facet_wrap(~Isolate*Species, scales = "free")
+q + theme(axis.text.x = element_text(angle = 60, hjust = 1))
+
+```
+Linear model analysis for salt for P. citrinum and Mortierellas/Linnemannia
+First subset for the treatment I was interested in and then did a linear model that tested the ASK MORGAN HOW TO DESCRIBE
+```{r}
+citrinum <- temperature_experiment %>%
+  subset(Isolate %in% c("CCH_F37_B"))
+  
+lm.citrinum <- lm(Growth_rate~ as.factor(Conc) + Temperature + as.factor(Conc)*Temperature, data = citrinum)
+summary(lm.salt)
+anova(lm.salt)
+```
+
+Same thing but for M. calciphila OEO-304
+```{r}
+calciphila <- temperature_experiment %>%
+  subset(Isolate %in% c("OEO-304"))
+  
+lm.calciphila <- lm(Growth_rate~ as.factor(Conc) + Temperature + as.factor(Conc)*Temperature, data = citrinum)
+summary(lm.salt)
+anova(lm.salt)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
