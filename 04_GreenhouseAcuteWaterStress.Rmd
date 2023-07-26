@@ -33,7 +33,7 @@ cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2"
 
 Load data set
 ```{r}
-photosynq <- read.csv("/Users/lau/Desktop/AU_research/Old_Rotation/Jan2022/Greenhouse_experiment/greenhouse.exp4/greenhouseall.csv", na.strings = "NA")
+photosynq <- read.csv("/Users/lau/Desktop/AU_research/Old_Rotation/Jan2022/PGPFpeanut/Data/04_AcuteStressGH.csv", na.strings = "NA")
 str(photosynq)
 ```
 

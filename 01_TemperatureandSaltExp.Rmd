@@ -30,7 +30,7 @@ cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2"
 
 Load data set
 ```{r}
-temperature_experiment <- read.csv("/Users/lau/Desktop/AU_research/Old_Rotation/August.2021/Salt_Experiment/temperature_Experiment/2022/2023/2023.03.24temperature_experiment31+23\ copy.csv", na.strings = "na")
+temperature_experiment <- read.csv("/Users/lau/Desktop/AU_research/Old_Rotation/Jan2022/PGPFpeanut/Data/01_TemperatureSaltExp.csv", na.strings = "na")
 str(temperature_experiment)
 ```
 
@@ -84,5 +84,4 @@ lm.calciphila <- lm(Growth_rate~ as.factor(Conc) + Temperature + as.factor(Conc)
 summary(lm.salt)
 anova(lm.salt)
 ```
-
 

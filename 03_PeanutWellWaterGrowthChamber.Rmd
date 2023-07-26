@@ -32,7 +32,7 @@ fungi.colors <- c("#c6dbef","#9ecae1","#6baed6","#3182bd","#08519c",
 
 Loading dataset
 ```{r}
-photosynq <- read.csv("/Users/lau/Desktop/AU_research/Old_Rotation/Jan2022/Growthchamberexp/02.19.2023wellwaterGC/2023.04.05GrowthchamberWellH2Ophotosynq.csv", na.strings = "null")
+photosynq <- read.csv("/Users/lau/Desktop/AU_research/Old_Rotation/Jan2022/PGPFpeanut/Data/03_WellH2OGC.csv", na.strings = "null")
 
 str(photosynq)
 

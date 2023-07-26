@@ -27,7 +27,7 @@ cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2"
 
 Loading data set
 ```{r}
-biomass_assay <- read.csv("/Users/lau/Desktop/AU_research/Old_Rotation/Jan2022/Biomas_assay/Biomas_assay2023.csv", na.strings = "na")
+biomass_assay <- read.csv("/Users/lau/Desktop/AU_research/Old_Rotation/Jan2022/PGPFpeanut/Data/02_BiomassAssay.csv", na.strings = "na")
 ```
 
 
