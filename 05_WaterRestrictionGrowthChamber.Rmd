@@ -3,7 +3,7 @@ title: "R Notebook"
 output: html_notebook
 ---
 
-Here we analyzed growth chamber under water restriction
+Here we analyzed peanuts inoculated with fungi in growth chamber under water restriction (20% of soil water content)
 
 Load packages and dependencies
 ```{r}
@@ -29,22 +29,21 @@ fungi.colors <- c("#c6dbef","#9ecae1","#6baed6","#3182bd","#08519c",
                            "#dadaeb", "#bcbddc", "#9e9ac8", "#807dba", "#6a51a3", "#4a1486",
                            "#fcbba1", "#fc9272", "#fb6a4a", "#ef3b2c", "#cb181d", "#99000d",
                            "#d9d9d9", "#bdbdbd", "#969696", "#737373", "#525252", "#252525")
-                           
+#Color blind Palette                           
 cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 ```
 
-load dataset
+load data set
 ```{r}
 photosynq <- read.csv("/Users/lau/Desktop/AU_research/Old_Rotation/Jan2022/Growthchamberexp/growthchamberalldata/growthchamberphotosinq05.01.22.csv", na.strings = "na")
 str(photosynq)
 ```
 
-We didn't work with treatment NVP5
+Eliminate treatment NVP5 we didn't work with it
 ```{r}
 minNVP5 <-  photosynq %>%
   subset(!Treatment %in% c("NVP5"))
 ```
-
 
 Shoot biomass
 ```{r}
@@ -142,159 +141,4 @@ minNVP5 %>%
   theme_classic() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
