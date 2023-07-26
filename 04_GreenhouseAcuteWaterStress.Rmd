@@ -3,9 +3,9 @@ title: "R Notebook"
 output: html_notebook
 ---
 
-Here we analyzed the greenhouse acute water restriction
+Here we analyzed the greenhouse acute water restriction in peanut plants inoculated with fungi
 
-Pacages and dependencies
+Packages and dependencies
 ```{r}
 library(ggplot2)
 library(tidyverse)
@@ -27,17 +27,17 @@ fungi.colors <- c("#c6dbef","#9ecae1","#6baed6","#3182bd","#08519c",
                            "#dadaeb", "#bcbddc", "#9e9ac8", "#807dba", "#6a51a3", "#4a1486",
                            "#fcbba1", "#fc9272", "#fb6a4a", "#ef3b2c", "#cb181d", "#99000d",
                            "#d9d9d9", "#bdbdbd", "#969696", "#737373", "#525252", "#252525")
-                           
+#color blind palette
 cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 ```
 
-Load dataset
+Load data set
 ```{r}
 photosynq <- read.csv("/Users/lau/Desktop/AU_research/Old_Rotation/Jan2022/Greenhouse_experiment/greenhouse.exp4/greenhouseall.csv", na.strings = "NA")
 str(photosynq)
 ```
 
-We eliminate NVP5 and days post drought 14
+We subset NVP5 and days post drought 14
 ```{r}
 photosynq_sub <- photosynq %>%
   subset(!dayspostdrought %in% c(14)) %>%
@@ -53,18 +53,14 @@ anova(lm.shoot)
 summary(lm.shoot)
 lsmeans.shoot <- emmeans(lm.shoot, ~ Species, adjust = "tukey") # estimate lsmeans
 Results_lsmeeans <- cld(object = lsmeans.shoot,
-                        Letters = letters, reversed = TRUE, details = TRUE) # contrast with Tukey ajustment
+                        Letters = letters, reversed = TRUE, details = TRUE) # contrast with Tukey adjustment
 ```
 Graph
 ```{r}
 ShootBiomass <- photosynq_sub %>%
   ggplot(aes(x = reorder(Species, -Shootbiomass), y = 1000*Shootbiomass)) +
   stat_summary(fun.y=mean,geom="bar", width = 0.75, position = "dodge") +
-  #stat_compare_means(method = "anova", label = "p.signif") +
   stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.5, position = "dodge") +
-  #geom_jitter(alpha = 0.05)+
-  #scale_x_discrete(labels = c("Control", "P. citrinum CCH_F37_B", "L. elongata NVP5", "L. elongata OEO-196",
-  #  "L. elongata OEO-198", "M. calciphila OEO-304", "M. alpina OEO-305")) +
   ylab("Shoot biomass (mg)") +
   xlab("") +
   theme_classic() +
@@ -153,312 +149,6 @@ photosynq_sub %>%
   theme_classic() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
