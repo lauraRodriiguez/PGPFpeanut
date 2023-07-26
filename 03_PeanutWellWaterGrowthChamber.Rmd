@@ -38,14 +38,13 @@ str(photosynq)
 
 ```
 
-
 We decided to exclude treatment NVP5.
 ```{r}
 photosynq_sub <-  photosynq %>%
   subset(!Treatment %in% c("NVP5"))
 ```
 
-Let's first analyze and visualize the shoot biomass data
+Let's analyze and visualize the shoot biomass data
 We used the linear model to test the effect of the treatments (fungal inoculations) in the shoot dry biomass of the peanuts. With this we tested one-way ANOVA to test the differences of means of the treatments and we lsmeeans we got the p-value btw treatments
 ```{r}
 lm.shoot <- lm(Shootbiomass~ Treatment, data = photosynq_sub)
@@ -104,7 +103,7 @@ rootbiomass <- photosynq_sub %>%
   theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust=1))
 ```
 
-Want to make it pretty? well let's put both root and shoot fig. together with ggarrange and label them as a) and b) for writing purposes 
+To put both root and shoot fig. together with ggarrange and label them as a) and b) for writing purposes 
 ```{r}
 ggarrange(shootbiomass, rootbiomass, labels = c("a", "b"))
 ```
@@ -140,166 +139,5 @@ photosynq_sub %>%
   theme_classic() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
