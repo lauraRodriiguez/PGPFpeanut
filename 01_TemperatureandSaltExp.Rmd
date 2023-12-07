@@ -51,7 +51,7 @@ So, here we subset for P. citrinum and the Mortierella and Linnemannia (because 
 ```{r}
 #Subset
 temperature_experiment_sub <- temperature_experiment %>%
-  subset(Isolate %in% c("CCH_F37_B", "OEO-196", "OEO-198", "OEO-304", "OEO-305"))
+  subset(Isolate %in% c("OEO-196", "OEO-198", "OEO-304", "OEO-305"))
 
 q <- ggplot(na.omit(temperature_experiment_sub), aes(x = Hours, y = MM, color = interaction(Conc, Temperature))) +
   stat_summary(fun.y=mean,geom="line", width = 0.95) +
@@ -64,24 +64,23 @@ q <- ggplot(na.omit(temperature_experiment_sub), aes(x = Hours, y = MM, color = 
 q + theme(axis.text.x = element_text(angle = 60, hjust = 1))
 
 ```
-Linear model analysis for salt for P. citrinum and Mortierellas/Linnemannia
-First subset for the treatment I was interested in and then did a linear model that tested if the growth was positielly or negativelly altered due to high temperatures or salinity.
-```{r}
-citrinum <- temperature_experiment %>%
-  subset(Isolate %in% c("CCH_F37_B"))
-  
-lm.citrinum <- lm(Growth_rate~ as.factor(Conc) + Temperature + as.factor(Conc)*Temperature, data = citrinum)
-summary(lm.salt)
-anova(lm.salt)
-```
+Linear model analysis for salt for M. calciphila OEO-304
+First subset for the treatment I was interested in and then did a linear model that tested if the growth was positively or negatively altered due to high temperatures or salinity.
 
-Same thing but for M. calciphila OEO-304
 ```{r}
 calciphila <- temperature_experiment %>%
   subset(Isolate %in% c("OEO-304"))
   
-lm.calciphila <- lm(Growth_rate~ as.factor(Conc) + Temperature + as.factor(Conc)*Temperature, data = citrinum)
-summary(lm.salt)
-anova(lm.salt)
+lm.calciphila <- lm(Growth_rate~ as.factor(Conc) + Temperature + as.factor(Conc)*Temperature, data = calciphila)
+summary(lm.calciphila)
+anova(lm.calciphila)
+```
+```{r}
+L.elongata196 <- temperature_experiment %>%
+  subset(Isolate %in% c("OEO-196"))
+  
+lm.L.elongata196 <- lm(Growth_rate~ as.factor(Conc) + Temperature + as.factor(Conc)*Temperature, data = L.elongata196)
+summary(lm.L.elongata196)
+anova(lm.L.elongata196)
 ```
 

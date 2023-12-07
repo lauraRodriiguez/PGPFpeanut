@@ -41,7 +41,7 @@ We subset NVP5 and days post drought 14
 ```{r}
 photosynq_sub <- photosynq %>%
   subset(!dayspostdrought %in% c(14)) %>%
-  subset(!Treatment %in% c("NVP5", "OEO-107", "OEO-112", "CCH_F36_A", "CCH_F36_B", "OEO-F5"))
+  subset(!Treatment %in% c("NVP5", "OEO-107", "OEO-112", "CCH_F36_A", "CCH_F36_B", "OEO-F5", "CCH_F36_B", "CCH_F37_B"))
 ```
 
 Shoot dry biomass
@@ -54,6 +54,7 @@ summary(lm.shoot)
 lsmeans.shoot <- emmeans(lm.shoot, ~ Species, adjust = "tukey") # estimate lsmeans
 Results_lsmeeans <- cld(object = lsmeans.shoot,
                         Letters = letters, reversed = TRUE, details = TRUE) # contrast with Tukey adjustment
+Results_lsmeeans
 ```
 Graph
 ```{r}
@@ -65,6 +66,7 @@ ShootBiomass <- photosynq_sub %>%
   xlab("") +
   theme_classic() +
   theme(axis.text.x = element_text(angle = 65, vjust = 1, hjust=1))
+ShootBiomass
 ```
 
 Root dry biomass
@@ -77,20 +79,21 @@ anova(lm.root)
 lsmeans.root <- emmeans(lm.root, ~ Species, adjust = "tukey") # estimate lsmeans
 Results_lsmeeans <- cld(object = lsmeans.root,
                         Letters = letters, reversed = TRUE, details = TRUE) # contrast with Tukey ajustment
+Results_lsmeeans
 ```
 Graph
 ```{r}
-photosynq_sub%>%
-  ggplot(aes(x = reorder(Species, -Rootbiomass), y = Rootbiomass)) +
-  #this is to take out the outlyers
-  geom_boxplot(outlier.colour = "white") +
-  scale_fill_manual(values=cbbPalette) +
-  stat_compare_means(method = "anova", label = "p.signif") +
-  ylab("Rootbiomass") +
+RootBiomass <- photosynq_sub %>%
+  ggplot(aes(x = reorder(Species, -Rootbiomass), y = 1000*Rootbiomass)) +
+  stat_summary(fun.y=mean,geom="bar", width = 0.75, position = "dodge") +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.5, position = "dodge") +
+  ylab("Root biomass (mg)") +
   xlab("") +
   theme_classic() +
-  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust=1))
+  theme(axis.text.x = element_text(angle = 65, vjust = 1, hjust=1))
+RootBiomass
 ```
+
 
 Phi2
 ```{r}
@@ -100,7 +103,7 @@ lm.phi2 <- lm(Phi2~ Treatment*as.factor(dayspostdrought) + (1|Trial), data = pho
 summary(lm.phi2)
 anova(lm.phi2)
 #this is the one we used #linear mixed effect model
-car::Anova(lm.phi2, test.statistic = "F")
+#car::Anova(lm.phi2, test.statistic = "F")
 lsmeans.phi2 <- emmeans(lm.phi2, ~ Treatment|dayspostdrought, adjust = "tukey") # estimate lsmeans
 Results_lsmeeans <- cld(object = lsmeans.phi2,
                         Letters = letters, reversed = TRUE, details = TRUE) # contrast with Tukey ajustment
@@ -108,7 +111,6 @@ Results_lsmeeans <- cld(object = lsmeans.phi2,
 Graph
 ```{r}
 photosynq_sub %>%
-  #subset(Treatment %in% c("ND-F", "D-F", "OEO-196" ,"OEO-198", "OEO-304", "CCH_F37_B", "OEO-305")) %>%
   subset(dayspostdrought %in% c(6:12)) %>%
   ggplot(aes(x = Species, y = Phi2, fill = Species)) +
   stat_summary(fun.y=mean,geom="bar", width = 0.75, position = "dodge") +
@@ -137,7 +139,6 @@ Results_lsmeeansrating <- cld(object = lsmeans.rating,
 Graph
 ```{r}
 photosynq_sub %>%
-  #subset(Treatment %in% c("ND-F", "D-F", "OEO-196" ,"OEO-198", "OEO-304", "CCH_F37_B", "OEO-305")) %>%
   subset(dayspostdrought %in% c(6:12)) %>%
   ggplot(aes(x = Species, y = Rating, fill = Species)) +
   stat_summary(fun.y=mean,geom="bar", width = 0.75, position = "dodge") +
