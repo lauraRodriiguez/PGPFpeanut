@@ -41,7 +41,7 @@ str(photosynq)
 We decided to exclude treatment NVP5.
 ```{r}
 photosynq_sub <-  photosynq %>%
-  subset(!Treatment %in% c("NVP5"))
+  subset(!Treatment %in% c("NVP5", "CCH_F37_B"))
 ```
 
 Let's analyze and visualize the shoot biomass data
@@ -51,27 +51,27 @@ lm.shoot <- lm(Shootbiomass~ Treatment, data = photosynq_sub)
 #plot(lm.shoot)
 summary(lm.shoot)
 anova(lm.shoot)
+
 lsmeans.shoot <- emmeans(lm.shoot, ~ Treatment, adjust = "tukey") # estimate lsmeans
+lsmeans.shoot
 
 Results_lsmeeans <- cld(object = lsmeans.shoot,
                         Letters = letters, reversed = TRUE, details = TRUE) # contrast with Tukey ajustment
+Results_lsmeeans
 ```
 Graph
 ```{r}
 #graph
 shootbiomass <- photosynq_sub %>%
-  ggplot(aes(x = Treatment, y = 1000*Shootbiomass)) +
+  ggplot(aes(x = Species, y = 1000*Shootbiomass)) +
   stat_summary(fun.y=mean,geom="bar", width = 0.75, position = "dodge") +
   stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.5, position = "dodge") +
   geom_jitter()+
-  #keep and aye for this command; it only substitute the label it does not means that is the correct label for the bar.
-  scale_x_discrete(labels = c("P. citrinum CCH_F37_B", "Control", "L. elongata OEO-196",
-                              "L. elongata OEO-198", "M. calciphila OEO-304", "M. alpina OEO-305")) +
   ylab("Shoot biomass (mg)") +
   xlab("") +
   theme_classic() +
   theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust=1))
-
+shootbiomass
 ```
 
 
@@ -82,25 +82,25 @@ lm.root <- lm(Rootbiomass~ Treatment, data = photosynq_sub)
 summary(lm.root)
 anova(lm.root)
 lsmeans.root <- emmeans(lm.root, ~ Treatment, adjust = "tukey") # estimate lsmeans
+lsmeans.root
 
 Results_lsmeeans <- cld(object = lsmeans.root,
                         Letters = letters, reversed = TRUE, details = TRUE) # contrast with Tukey ajustment
+Results_lsmeeans
 ```
 graph
 ```{r}
 rootbiomass <- photosynq_sub %>%
   #subset(dayspostdrought == 12) %>%
-  ggplot(aes(x = Treatment, y = 1000*Rootbiomass)) +
+  ggplot(aes(x = Species, y = 1000*Rootbiomass)) +
   stat_summary(fun.y=mean,geom="bar", width = 0.75, position = "dodge") +
   stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.5, position = "dodge") +
   geom_jitter()+
-  ##keep and aye for this command; it only substitute the label it does not means that is the correct label for the bar.
-  scale_x_discrete(labels = c("P. citrinum CCH_F37_B", "Control", "L. elongata OEO-196",
-                              "L. elongata OEO-198", "M. calciphila OEO-304", "M. alpina OEO-305")) +
   ylab("Root biomass (mg)") +
   xlab("") +
   theme_classic() +
   theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust=1))
+rootbiomass
 ```
 
 To put both root and shoot fig. together with ggarrange and label them as a) and b) for writing purposes 
@@ -122,6 +122,7 @@ lsmeans.phi2 <- emmeans(lm.phi2, ~ Treatment|dayspostdrought, adjust = "tukey") 
 
 Results_lsmeeans <- cld(object = lsmeans.phi2,
                         Letters = letters, reversed = TRUE, details = TRUE) # contrast with Tukey ajustment
+Results_lsmeeans
 
 #Graph
 photosynq_sub %>%
@@ -130,14 +131,25 @@ photosynq_sub %>%
   stat_summary(fun.y=mean,geom="bar", width = 0.75, position = "dodge") +
   stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.5, position = "dodge") +
   scale_fill_manual(values=fungi.colors) +
-  ##keep and aye for this command; it only substitute the label it does not means that is the correct label for the bar.
-  scale_x_discrete(labels = c("Control", "L. elongata OEO-196", "L. elongata OEO-198",
-                              "M. alpina OEO-305", "M. calciphila OEO-304","P. citrinum CCH_F37_B")) +
   ylab("Phi2") +
   xlab("") +
   facet_wrap(~dayspostdrought)+
   theme_classic() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
-
+Phi2 throught time. This can give us an idea of cutout point for Phi2
+```{r}
+photosynq_sub %>%
+  #subset(photosynq$dayspostdrought < 10) %>%
+  ggplot(aes(x = dayspostdrought, y = Phi2, color = Treatment)) +
+  #geom_boxplot(position = "dodge", outlier.alpha = 0.5) +
+  geom_smooth(se = FALSE)+
+  geom_point(alpha = 0.5)+
+  scale_color_manual(values=cbbPalette) +
+  ylab("Phi2") +
+  xlab("Days Post Drought") +
+  theme_classic() +
+  #facet_wrap(~Treatment) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
 
